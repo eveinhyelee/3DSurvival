@@ -9,7 +9,7 @@
 
 - 기능 1 기본 이동 및 점프 Input System, Rigidbody ForceMode
   
-- 기능 2 체력바 UI UI
+- 기능 2 체력바 UI
 
 - 기능 3 동적 환경 조사 Raycast UI
 
