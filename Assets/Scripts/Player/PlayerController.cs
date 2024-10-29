@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,10 +8,14 @@ public class PlayerController : MonoBehaviour
 {
     [Header("Movement")]
     public float moveSpeed;
+    public float runSpeed;
     public float jumpPower;
     private Vector2 curMovementInput;
     public LayerMask groundLayerMask;
-    
+    private Animator animator;
+    private bool isRun;
+
+    private float jumpZoneJumpForce = 200f;
 
     [Header("Look")]
     public Transform cameraContainer;
@@ -19,13 +24,22 @@ public class PlayerController : MonoBehaviour
     private float camCurXRot;
     public float lookSensitivity;
     private Vector2 mouseDelta;
+    public bool canLook = true; //마우스커서
 
-
-    private Rigidbody rigidbody;
+    public Action inventory;
+    public Rigidbody rigidbody;
 
     void Awake()
     {
         rigidbody = GetComponent<Rigidbody>();
+        animator = GetComponent<Animator>();
+    }
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.layer == LayerMask.NameToLayer("JumpSpot"))
+        {
+            rigidbody.AddForce(Vector3.up * jumpZoneJumpForce, ForceMode.Impulse);
+        }
     }
     private void Start()
     {
@@ -38,7 +52,10 @@ public class PlayerController : MonoBehaviour
     }
     private void LateUpdate()
     {
-        CameraLook(); //Y값도 Min/Max 제어 필요해보임!
+        if (canLook)
+        { 
+            CameraLook(); //Y값도 Min/Max 제어 필요해보임!        
+        }
     }
     private void Move()
     {
@@ -47,11 +64,15 @@ public class PlayerController : MonoBehaviour
         dir.y = rigidbody.velocity.y; // Y값 초기화 = 점프를 할때만 위아래로 넣어줘야함.
         
         rigidbody.velocity = dir;
+
+        if (isRun == true)
+        {            
+            dir *= runSpeed;            
+        }       
     }
 
     private void CameraLook() //플레이어대신 카메라값
-    {
-        //TODO : 플레이어값을 받아와서 플레이어 방향 조절필요
+    {        
         camCurXRot += mouseDelta.y * lookSensitivity;
         camCurXRot = Mathf.Clamp(camCurXRot,minXLook,maxXLook);
         cameraContainer.localEulerAngles = new Vector3(-camCurXRot, 0, 0);
@@ -64,10 +85,12 @@ public class PlayerController : MonoBehaviour
         if (context.phase == InputActionPhase.Performed) // Started = 키가 눌린순간 1번만
         {
             curMovementInput = context.ReadValue<Vector2>();
+            animator.SetBool("isWalk",true);
         }
         else if (context.phase == InputActionPhase.Canceled)
         { 
             curMovementInput = Vector2.zero;
+            animator.SetBool("isWalk", false);
         }
     }
     public void OnLook(InputAction.CallbackContext context)
@@ -79,6 +102,7 @@ public class PlayerController : MonoBehaviour
         if (context.phase == InputActionPhase.Started && IsGrounded()) 
         {
             rigidbody.AddForce(Vector2.up * jumpPower, ForceMode.Impulse);
+            animator.SetTrigger("isJump");
         }
     }
     bool IsGrounded()
@@ -98,5 +122,33 @@ public class PlayerController : MonoBehaviour
             }
         }
         return false;
+    }
+    public void OnRun(InputAction.CallbackContext context)
+    {
+        if (context.phase == InputActionPhase.Performed)
+        {            
+            isRun = true;
+            animator.SetBool("isRun", true);
+        }
+        else if (context.phase == InputActionPhase.Canceled)
+        {
+            isRun = false;
+            animator.SetBool("isRun", false);
+        }
+    }
+
+    public void OnInventory(InputAction.CallbackContext context)
+    {
+        if (context.phase == InputActionPhase.Started)
+        {
+            inventory?.Invoke();
+            ToggleCursor();
+        }
+    }
+    void ToggleCursor()
+    { 
+        bool toggle = Cursor.lockState == CursorLockMode.Locked;
+        Cursor.lockState = toggle? CursorLockMode.None : CursorLockMode.Locked;
+        canLook = !toggle;
     }
 }

@@ -13,6 +13,7 @@ public class PlayerCondition : MonoBehaviour
 
     public float noHungerHealthDecay;    
     
+
     void Update()
     {
         hunger.Subtract(hunger.passiveValue * Time.deltaTime);
@@ -35,6 +36,10 @@ public class PlayerCondition : MonoBehaviour
     public void Eat(float amount)
     {
         hunger.Add(amount);
+    }
+    public void Drink(float amount)
+    {
+        stemina.Add(amount);
     }
     public void Die()
     {
