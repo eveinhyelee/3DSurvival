@@ -21,4 +21,4 @@ MonoBehaviour:
   maxStackAmount: 12
   consumables:
   - type: 0
-    value: 10
+    value: 20
