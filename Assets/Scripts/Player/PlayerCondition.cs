@@ -2,22 +2,27 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem.XR;
 
 public class PlayerCondition : MonoBehaviour
 {
     public UICondition uiCondition;
+    public PlayerController controller;
 
     Condition health { get { return uiCondition.health; } }
     Condition hunger { get { return uiCondition.hunger; } }
     Condition stemina { get { return uiCondition.stemina; } }
 
-    public float noHungerHealthDecay;    
-    
+    public float noHungerHealthDecay;
+
+    private void Awake()
+    {
+        controller = CharacterManager.Instance.Player.controller;
+    }
 
     void Update()
     {
         hunger.Subtract(hunger.passiveValue * Time.deltaTime);
-        stemina.Add(stemina.passiveValue * Time.deltaTime);
 
         if (hunger.curValue == 0)
         {
@@ -26,6 +31,17 @@ public class PlayerCondition : MonoBehaviour
         if(health.curValue == 0) 
         {
             Die();
+        }
+        if (stemina.curValue > 0)
+        {
+            if (controller.IsRun)
+            {
+                stemina.Subtract(stemina.passiveValue * Time.deltaTime);
+            }
+        }
+        if (stemina.curValue == 0)
+        {
+            CantRun();
         }
     }
 
@@ -44,5 +60,9 @@ public class PlayerCondition : MonoBehaviour
     public void Die()
     {
         Debug.Log("ав╬З╢ы");
+    }
+    public void CantRun()
+    {
+        controller.IsRun = false;        
     }
 }

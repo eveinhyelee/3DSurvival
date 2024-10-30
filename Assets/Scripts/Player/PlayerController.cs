@@ -14,8 +14,13 @@ public class PlayerController : MonoBehaviour
     public LayerMask groundLayerMask;
     private Animator animator;
     private bool isRun;
+    public bool IsRun
+    {
+        get { return isRun;  }
+        set { isRun = value; }
+    }
 
-    private float jumpZoneJumpForce = 200f;
+    private float jumpZoneJumpForce = 100f;
 
     [Header("Look")]
     public Transform cameraContainer;
@@ -66,9 +71,14 @@ public class PlayerController : MonoBehaviour
         rigidbody.velocity = dir;
 
         if (isRun == true)
-        {            
-            dir *= runSpeed;            
-        }       
+        {
+            dir *= runSpeed;
+        }
+        else if (isRun == false)
+        {
+            dir *= moveSpeed;
+            animator.SetBool("isRun", false);
+        }
     }
 
     private void CameraLook() //플레이어대신 카메라값

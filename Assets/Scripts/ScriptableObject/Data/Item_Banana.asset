@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e38accef85938cb4fb436709dd4ee018, type: 3}
+  m_Name: Item_Banana
+  m_EditorClassIdentifier: 
+  displayName: "\uB178\uB780\uBC14\uB098\uB098"
+  description: "\uB2EC\uB2EC\uD568\uC744 +10\uC62C\uB824\uC90D\uB2C8\uB2E4."
+  type: 1
+  icon: {fileID: 21300000, guid: f9807b46106d56d438c45d1d13ab0b39, type: 3}
+  dropPrefab: {fileID: 8401153010261348154, guid: 00784753195af3a49a82c557f2b93289, type: 3}
+  canStack: 1
+  maxStackAmount: 12
+  consumables:
+  - type: 1
+    value: 10
